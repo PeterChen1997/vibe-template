@@ -1,0 +1,12 @@
+# Dependencies
+node_modules
+dist
+.wrangler
+.vercel
+.env
+.env.local
+.dev.vars
+*.log
+
+# OS
+.DS_Store

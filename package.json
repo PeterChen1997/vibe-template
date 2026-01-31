@@ -1,0 +1,26 @@
+{
+  "name": "vibe-repo-template",
+  "version": "0.1.0",
+  "private": true,
+  "description": "高性能 Vibe 项目开源模版 (Hono + Cloudflare + React)",
+  "workspaces": ["api", "web", "shared"],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:web\" \"npm run dev:api\"",
+    "dev:web": "npm run dev --prefix web",
+    "dev:api": "npm run dev --prefix api",
+    "build": "npm run build:web && npm run build:api",
+    "build:web": "npm run build --prefix web",
+    "build:api": "npm run build --prefix api",
+    "deploy": "./deploy.sh all",
+    "deploy:api": "./deploy.sh api",
+    "deploy:web": "./deploy.sh web",
+    "db:migrate": "npm run db:migrate --prefix api",
+    "db:migrate:remote": "npm run db:migrate:remote --prefix api"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
