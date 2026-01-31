@@ -3,6 +3,7 @@ import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import type { Env } from './types';
 import type { ApiResponse, HelloMessage } from '@shared/types';
+import ai from './routes/ai';
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -23,6 +24,9 @@ app.get('/health', (c) => {
   const res: ApiResponse = { message: 'ok' };
   return c.json(res);
 });
+
+// AI 路由
+app.route('/ai', ai);
 
 // 示例路由
 app.get('/hello', (c) => {

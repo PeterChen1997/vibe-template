@@ -1,1 +1,1 @@
-export interface Env { DB: D1Database; MEDIA_BUCKET?: R2Bucket; ACCESS_TOKEN: string; CORS_ORIGIN: string; }
+export interface Env { DB: D1Database; MEDIA_BUCKET?: R2Bucket; ACCESS_TOKEN: string; CORS_ORIGIN: string; POE_API_KEY: string; }

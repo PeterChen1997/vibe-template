@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { api } from './api/client';
 import type { HelloMessage } from '../../shared/types';
+import { AIAnalyzer } from './components/AIAnalyzer';
 
 function App() {
   const [status, setStatus] = useState<string>('Loading...');
@@ -42,6 +43,10 @@ function App() {
               {data ? data.message : '...'}
             </p>
           </div>
+        </div>
+
+        <div className="mt-8">
+          <AIAnalyzer />
         </div>
 
         <div className="mt-8 flex gap-4 justify-center">

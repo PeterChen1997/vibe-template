@@ -21,7 +21,7 @@
 ```text
 ├── .github/workflows/     # CI/CD (仅 API)
 │   └── deploy-api.yml     # Workers 自动部署
-├── api/                   # 后端
+│   ├── routes/            # 路由定义 (如 ai.ts)
 │   ├── src/               # Hono 应用代码
 │   ├── migrations/        # D1 数据库迁移
 │   └── wrangler.toml      # Cloudflare 配置
@@ -64,6 +64,14 @@ cd api && npx wrangler d1 create vibe-db
 # 将返回的 database_id 填入 api/wrangler.toml
 ```
 
+### 4. AI 功能配置 (可选)
+
+项目内置了 AI 智能分析功能 (基于 Poe API)：
+
+1. 获取您的 **Poe API Key**。
+2. 在 `api/wrangler.toml` 中配置 `POE_API_KEY`。
+3. 本地开发时，可在 `api/.dev.vars` 中添加 `POE_API_KEY=your_key`。
+
 ---
 
 ## ⚙️ 环境变量配置
@@ -83,6 +91,7 @@ cd api && npx wrangler d1 create vibe-db
 | :--- | :--- | :--- |
 | `ACCESS_TOKEN` | API 鉴权密钥 | `wrangler secret put ACCESS_TOKEN` |
 | `DB` | D1 数据库绑定 | 在 `wrangler.toml` 中配置 |
+| `POE_API_KEY` | Poe API 密钥 | `wrangler secret put POE_API_KEY` |
 
 ### Vercel 配置
 

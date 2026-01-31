@@ -6,3 +6,11 @@ export interface ApiResponse<T = any> {
 export interface HelloMessage {
   message: string;
 }
+
+export interface AiAnalyzeRequest {
+  text: string;
+}
+
+export interface AiAnalyzeResponse {
+  content: string;
+}

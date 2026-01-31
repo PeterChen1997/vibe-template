@@ -50,4 +50,61 @@ export const api = {
   put: <T = unknown>(path: string, data: unknown) => 
     apiClient<T>(path, { method: 'PUT', body: JSON.stringify(data) }),
   delete: <T = unknown>(path: string) => apiClient<T>(path, { method: 'DELETE' }),
+  
+  /**
+   * AI 智能解析 (支持流式输出)
+   */
+  analyzeContentStream: async (
+    text: string,
+    onChunk: (chunk: string, fullContent: string) => void
+  ): Promise<string> => {
+    const token = getAccessToken();
+    const response = await fetch(`${API_BASE_URL}/ai/analyze?stream=1`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({ text }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ error: 'AI analysis failed' }));
+      throw new Error(error.error || `HTTP error! status: ${response.status}`);
+    }
+
+    const reader = response.body?.getReader();
+    if (!reader) throw new Error('ReadableStream not supported');
+
+    const decoder = new TextDecoder();
+    let fullContent = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      const chunk = decoder.decode(value);
+      const lines = chunk.split('\n');
+      
+      for (const line of lines) {
+        if (line.startsWith('data: ')) {
+          const data = line.slice(6);
+          if (data === '[DONE]') break;
+          
+          try {
+            const parsed = JSON.parse(data);
+            if (parsed.choices?.[0]?.delta?.content) {
+              const content = parsed.choices[0].delta.content;
+              fullContent += content;
+              onChunk(content, fullContent);
+            }
+          } catch (e) {
+            // Ignore parse errors for incomplete chunks
+          }
+        }
+      }
+    }
+
+    return fullContent;
+  },
 };
