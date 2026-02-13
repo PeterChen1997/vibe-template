@@ -9,6 +9,8 @@ deploy_api() {
   echo "🚀 正在部署 API (Cloudflare Workers)..."
   cd api
   npm install
+  echo "📦 执行数据库迁移..."
+  npm run db:migrate:remote
   npm run deploy
   cd ..
   echo "✅ API 部署完成！"

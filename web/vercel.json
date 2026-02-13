@@ -3,6 +3,10 @@
     {
       "source": "/api/:path*",
       "destination": "https://vibe-api.YOUR_SUBDOMAIN.workers.dev/:path*"
+    },
+    {
+      "source": "/:path*",
+      "destination": "/index.html"
     }
   ]
 }

@@ -3,7 +3,14 @@ import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import type { Env } from './types';
 import type { ApiResponse, HelloMessage } from '@shared/types';
+
+// ============================================================
+// 📦 模块路由导入
+// 注释掉不需要的路由即可禁用对应功能
+// ============================================================
 import ai from './routes/ai';
+import upload from './routes/upload';
+import items from './routes/items';
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -25,8 +32,13 @@ app.get('/health', (c) => {
   return c.json(res);
 });
 
-// AI 路由
-app.route('/ai', ai);
+// ============================================================
+// 📦 模块路由注册
+// 注释掉不需要的路由即可禁用对应功能
+// ============================================================
+app.route('/ai', ai);         // 🤖 AI 智能分析 + 聊天
+app.route('/upload', upload);  // 📎 文件上传 (需要 R2)
+app.route('/items', items);    // 📋 CRUD 示例
 
 // 示例路由
 app.get('/hello', (c) => {

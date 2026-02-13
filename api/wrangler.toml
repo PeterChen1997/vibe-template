@@ -10,7 +10,8 @@ database_name = "vibe-db"
 database_id = "YOUR_DATABASE_ID_HERE"
 migrations_dir = "migrations"
 
-# R2 存储桶绑定 (可选)
+# R2 存储桶绑定
+# 📦 用于文件上传功能，不需要时注释掉下面三行即可
 # [[r2_buckets]]
 # binding = "MEDIA_BUCKET"
 # bucket_name = "vibe-media"
@@ -18,11 +19,14 @@ migrations_dir = "migrations"
 # 环境变量
 [vars]
 CORS_ORIGIN = "*"
-# ACCESS_TOKEN 请使用 wrangler secret put ACCESS_TOKEN 设置
+# ACCESS_TOKEN 和 POE_API_KEY 请使用 wrangler secret put 设置
 # 本地开发请在 .dev.vars 中设置
 ACCESS_TOKEN = "vibe-dev-token"
 POE_API_KEY = "YOUR_POE_API_KEY_HERE"
 
 # 开发环境配置
+[dev]
+port = 8787
+
 [env.dev]
 name = "vibe-api-dev"

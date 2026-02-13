@@ -1,79 +1,45 @@
-import { useEffect, useState } from 'react';
-import { api } from './api/client';
-import type { HelloMessage } from '../../shared/types';
-import { AIAnalyzer } from './components/AIAnalyzer';
+/**
+ * 🧭 应用入口 + 路由配置
+ *
+ * Layout = ThemeProvider + 页面内容 + 底部导航
+ *
+ * 禁用页面/功能：
+ * - 注释路由行即可移除对应页面
+ * - 移除 <BottomNav /> 可禁用底部导航
+ * - 移除 <ThemeProvider> 可禁用主题系统
+ */
+import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom';
+import { ThemeProvider } from './components/ThemeProvider';
+import { BottomNav } from './components/BottomNav';
+import { HomePage } from './pages/HomePage';
+import { AIPage } from './pages/AIPage';
+import { SettingsPage } from './pages/SettingsPage';
+
+const Layout = () => {
+  return (
+    <ThemeProvider>
+      <div className="min-h-screen bg-[#F8F8FC] dark:bg-gray-900 transition-colors duration-300">
+        <Outlet />
+        <BottomNav />
+      </div>
+    </ThemeProvider>
+  );
+};
 
 function App() {
-  const [status, setStatus] = useState<string>('Loading...');
-  const [data, setData] = useState<HelloMessage | null>(null);
-
-  useEffect(() => {
-    // 检查健康状态 (Health check directly returns ApiResponse)
-    api.get('/health')
-      .then(res => setStatus(`API Status: ${res.message || 'ok'}`))
-      .catch(err => setStatus(`API Error: ${err.message}`));
-
-    // 获取示例数据 (Data is inside ApiResponse.data)
-    api.get('/hello')
-      .then(res => {
-        if (res.data) {
-          setData(res.data);
-        }
-      })
-      .catch(() => setData({ message: 'Welcome to Vibe Template' }));
-  }, []);
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center p-4">
-      <div className="bg-white/20 backdrop-blur-lg border border-white/30 rounded-3xl p-8 shadow-2xl max-w-md w-full text-white text-center">
-        <h1 className="text-4xl font-bold mb-4 drop-shadow-md">Vibe Template</h1>
-        <p className="text-lg opacity-90 mb-8 italic">
-          High-efficiency, low-cost, full-stack template.
-        </p>
-        
-        <div className="space-y-4 text-left">
-          <div className="bg-white/10 p-4 rounded-xl border border-white/10">
-            <span className="text-xs uppercase tracking-wider opacity-60">Status</span>
-            <p className="font-mono text-sm">{status}</p>
-          </div>
-          
-          <div className="bg-white/10 p-4 rounded-xl border border-white/10">
-            <span className="text-xs uppercase tracking-wider opacity-60">Message</span>
-            <p className="text-xl font-semibold">
-              {data ? data.message : '...'}
-            </p>
-          </div>
-        </div>
-
-        <div className="mt-8">
-          <AIAnalyzer />
-        </div>
-
-        <div className="mt-8 flex gap-4 justify-center">
-          <a 
-            href="https://vercel.com" 
-            target="_blank" 
-            className="hover:scale-110 transition-transform bg-white/10 px-4 py-2 rounded-full text-xs"
-          >
-            Vercel
-          </a>
-          <a 
-            href="https://workers.cloudflare.com" 
-            target="_blank" 
-            className="hover:scale-110 transition-transform bg-white/10 px-4 py-2 rounded-full text-xs"
-          >
-            Workers
-          </a>
-          <a 
-            href="https://hono.dev" 
-            target="_blank" 
-            className="hover:scale-110 transition-transform bg-white/10 px-4 py-2 rounded-full text-xs"
-          >
-            Hono
-          </a>
-        </div>
-      </div>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route element={<Layout />}>
+          {/* ============================================================ */}
+          {/* 📝 在这里添加或注释路由来管理页面 */}
+          {/* ============================================================ */}
+          <Route path="/" element={<HomePage />} />
+          <Route path="/ai" element={<AIPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
 

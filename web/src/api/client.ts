@@ -1,12 +1,24 @@
 /**
- * 通用 API 请求客户端 (通过 Vercel 代理)
+ * 🌐 API 客户端
+ *
+ * 功能：
+ * - 标准 CRUD (GET/POST/PUT/DELETE)
+ * - AI 流式分析 (analyzeContentStream)
+ * - AI 聊天 (chat)
+ * - 文件上传 (upload)
+ * - Token 管理 (getAccessToken / setAccessToken)
  */
-import type { ApiResponse } from '@shared/types';
+import type { ApiResponse, ChatMessage } from '@shared/types';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
 export const getAccessToken = () => {
-  return localStorage.getItem('ACCESS_TOKEN') || 'vibe-dev-token';
+  try {
+    const stored = JSON.parse(localStorage.getItem('vibe-app-storage') || '{}');
+    return stored?.state?.token || 'vibe-dev-token';
+  } catch {
+    return 'vibe-dev-token';
+  }
 };
 
 export const setAccessToken = (token: string) => {
@@ -20,10 +32,10 @@ export const apiClient = async <T = unknown>(
   const url = `${API_BASE_URL}${path}`;
   const token = getAccessToken();
 
-  const headers = {
+  const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    ...options.headers,
+    ...(options.headers as Record<string, string> || {}),
   };
 
   const response = await fetch(url, {
@@ -52,7 +64,41 @@ export const api = {
   delete: <T = unknown>(path: string) => apiClient<T>(path, { method: 'DELETE' }),
   
   /**
-   * AI 智能解析 (支持流式输出)
+   * 📎 文件上传
+   */
+  upload: async (file: File): Promise<ApiResponse<{ url: string; key: string; size: number; type: string }>> => {
+    const token = getAccessToken();
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await fetch(`${API_BASE_URL}/upload`, {
+      method: 'POST',
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ error: 'Upload failed' }));
+      throw new Error(error.error || `HTTP error! status: ${response.status}`);
+    }
+
+    return response.json();
+  },
+
+  /**
+   * 🤖 AI 多轮聊天 (非流式)
+   */
+  chat: async (text: string, context: ChatMessage[] = []): Promise<ApiResponse<{ content: string }>> => {
+    return apiClient('/ai/chat', {
+      method: 'POST',
+      body: JSON.stringify({ text, context }),
+    });
+  },
+
+  /**
+   * 🤖 AI 智能解析 (支持流式输出)
    */
   analyzeContentStream: async (
     text: string,
